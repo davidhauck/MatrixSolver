@@ -5,14 +5,14 @@
 
 #include <iostream>
 #include <vector>
+#include <complex>
 
 using namespace std;
 
 
-vector<vector<double> > generateSparseMatrix(int iMax, int kMax, int jMax) {
-    vector<vector<double> > matrix;
-    vector<double> row;
-    double aValue;
+void generateSparseMatrix(int iMax, int kMax, int jMax) {
+    int nMax = iMax * jMax * kMax;
+    complex<double> matrix[nMax][nMax];
     int home, neighbor, new_k, new_j, new_i;
     for (int k = 0; k < kMax; ++k) {
         for (int j = 0; j < jMax; ++j) {
@@ -20,8 +20,40 @@ vector<vector<double> > generateSparseMatrix(int iMax, int kMax, int jMax) {
                 home = (k - 1) * jMax * iMax + (j - 1) * iMax + i;
                 for (int nk = 0; nk < 2; ++nk) {
                     new_k = k + nk - 1;
-                    if !(new_k < 1 || new_k > kMax) 
-                        // What do we do here..?
+                    if (!(new_k < 1 || new_k > kMax)) {
+                        for (int nj = 0; nj < 2; ++nj) {
+                            new_j = j + nj - 1;
+                            if (!(new_j < 1 || new_j > jMax)) {
+                                for (int ni = 0; ni < 2; ++ni) {
+                                    new_i = i + ni - 1;
+                                    if !(new_i < 1 || new_i > iMax) {
+                                        neighbor = (new_k - 1) * jMax * iMax + (new_j - 1) * iMax + new_i
+                                        if (neighbor > home) {
+                                            complex<double> aValue(jMax - j + 1, iMax - i + 1);
+                                            matrix[home][home] = matrix[home][home] + aValue;
+                                            matrix[neighbor][neighbor] = matrix[neighbor][neighbor] + aValue;
+                                            matrix[home][neighbor] = -1 * aValue;
+                                            matrix[neighbor][home] = -1 * aValue;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (k == kMax)
+                    matrix[home][home] = matrix[home][home] + aValue;
+            }
+        }
+    }
+
+    for (int i = 0; i < nMax; ++i) {
+        for (int j = 0; j < nMax; ++j) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+
 
 
 }
